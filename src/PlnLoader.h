@@ -5,33 +5,38 @@
 #include <string>
 #include <fstream>
 
+#include "Plan.h"
+
 class PlnLoader
 {
 public:
   PlnLoader() {}
   ~PlnLoader() {}
 
-  std::vector<int>              parseLine(std::string const & line) const {
-    std::vector<int>            matrixRow;
-
-    matrixRow.reserve(line.length());
+  void				parseLine(std::vector<int> & map, std::string const & line) const {
     for (auto character : line) {
-      matrixRow.push_back((character == '1') ? 1 : 0);
+      map.push_back((character == '1') ? 1 : 0);
     }
-
-    return matrixRow;
   }
 
   Plan                          load(std::ifstream & plnFile) const {
-    std::vector<std::vector<int>>       matrix;
+    unsigned				width = 0;
+    unsigned				height = 0;
+    std::vector<int>			map;
     std::string                         line;
 
     while (std::getline(plnFile, line)) {
-      matrix.push_back(parseLine(line));
+      parseLine(map, line);
+      ++height;
     }
 
-    return Plan(matrix);
+    width = line.size();
+    return Plan(width, height, map);
   }
+
+private:
+  PlnLoader(PlnLoader const &) = delete;
+  PlnLoader & operator=(PlnLoader const &) = delete;
 };
 
 #endif

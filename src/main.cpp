@@ -1,5 +1,6 @@
 #include <fstream>
 #include <iostream>
+#include <memory>
 
 #include	"Plan.h"
 #include	"PlnLoader.h"
@@ -21,6 +22,8 @@ int main(int argc, char * argv[])
   ifs.close();
   std::cout << plan;
 
-  architect.countRoom(plan);
+
+  architect.countRooms(plan);
+
   return 0;
 }

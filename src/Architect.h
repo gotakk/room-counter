@@ -1,59 +1,75 @@
 #ifndef __ARCHITECT_H__
 #define __ARCHITECT_H__
 
-#include "Plan.h"
 #include <iostream>
 #include <vector>
+#include "Plan.h"
 
 class Architect
 {
 public:
   Architect() {}
 
-  void exploreCell(int rowIndex, int colIndex, int maxRowIndex, int maxColIndex) {
-    matrix[rowIndex][colIndex] = 2;
-
-    // TOP
-    if (rowIndex > 0 && matrix[rowIndex - 1][colIndex] == 0) {
-      exploreCell(rowIndex - 1, colIndex, maxRowIndex, maxColIndex);
-    }
-
-    // RIGHT
-    if (colIndex < maxColIndex && matrix[rowIndex][colIndex + 1] == 0) {
-      exploreCell(rowIndex, colIndex + 1, maxRowIndex, maxColIndex);
-    }
-
-    // BOTTOM
-    if (rowIndex < maxRowIndex && matrix[rowIndex + 1][colIndex] == 0) {
-      exploreCell(rowIndex + 1, colIndex, maxRowIndex, maxColIndex);
-    }
-
-    // LEFT
-    if (colIndex > 0 && matrix[rowIndex][colIndex - 1] == 0) {
-      exploreCell(rowIndex, colIndex - 1, maxRowIndex, maxColIndex);
-    }
-  }
-
-  int countRoom(const Plan & plan) {
-    Plan tmp = plan;
+  int countRooms(Plan & plan) {
     int counter = 0;
-    matrix = tmp.getMatrix();
-    int maxRowIndex = matrix.size();
-    int maxColIndex = matrix[0].size();
+    unsigned width = plan.getWidth();
+    unsigned height = plan.getHeight();
+    unsigned widthIndex = 0;
+    unsigned heightIndex = 0;
+    unsigned size = plan.getSize();
 
-    for (int rowIndex = 0; rowIndex < matrix.size(); ++rowIndex) {
-      for (int colIndex = 0; colIndex < matrix[rowIndex].size(); ++colIndex) {
-	if (matrix[rowIndex][colIndex] == 0) {
-	  ++counter;
-	  exploreCell(rowIndex, colIndex, maxRowIndex, maxColIndex);
-	}
+    for (unsigned index = 0; index < size; ++index) {
+      widthIndex = index / width;
+      heightIndex = (index / width) + height;
+
+      if (plan.getCell(index) == 0) {
+	++counter;
+	exploreRoom(plan, widthIndex, heightIndex, width, height);
       }
     }
 
-    std::cout << counter;
+    // for (unsigned rowIndex = 0; rowIndex < matrix.size(); ++rowIndex) {
+    //   for (unsigned colIndex = 0; colIndex < matrix[rowIndex].size(); ++colIndex) {
+    // 	if (matrix[rowIndex][colIndex] == 0) {
+    // 	  ++counter;
+    // 	  exploreRoom(rowIndex, colIndex, maxRowIndex, maxColIndex);
+    // 	}
+    //   }
+    // }
+
+    std::cout << counter << std::endl;
+    return counter;
   }
+
 private:
-  Plan::Matrix		matrix;
+  void			exploreRoom(Plan & plan, unsigned widthIndex, unsigned heightIndex, unsigned width, unsigned height) {
+    plan.setCell(widthIndex, heightIndex, 2);
+
+    // TOP
+    if (widthIndex > 0 && plan.getCell(widthIndex - 1, heightIndex) == 0) {
+      exploreRoom(plan, widthIndex - 1, heightIndex, width, height);
+    }
+
+    // RIGHT
+    if (heightIndex < height && plan.getCell(widthIndex, heightIndex + 1) == 0) {
+      exploreRoom(plan, widthIndex, heightIndex + 1, width, height);
+    }
+
+    // BOTTOM
+    if (widthIndex < width && plan.getCell(widthIndex + 1, heightIndex) == 0) {
+      exploreRoom(plan, widthIndex + 1, heightIndex, width, height);
+    }
+
+    // LEFT
+    if (heightIndex > 0 && plan.getCell(widthIndex, heightIndex - 1) == 0) {
+      exploreRoom(plan, widthIndex, heightIndex - 1, width, height);
+    }
+  }
+
+private:
+  Architect(Architect const & architect) = delete;
+  Architect &	operator=(Architect const & architect) = delete;
+
 };
 
 #endif
