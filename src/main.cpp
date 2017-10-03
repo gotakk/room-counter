@@ -13,15 +13,11 @@ int main(int argc, char * argv[])
     return 1;
   }
 
-  std::ifstream ifs(argv[1], std::ifstream::in);
-
   PlnLoader plnLoader;
-  Plan plan = plnLoader.load(ifs);
+  Plan plan = plnLoader.load(argv[1]);
   Architect architect;
 
-  ifs.close();
   std::cout << plan;
-
 
   architect.countRooms(plan);
 

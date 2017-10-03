@@ -4,19 +4,27 @@
 #include <vector>
 #include <string>
 #include <fstream>
+#include <stdexcept>
 
 #include "Plan.h"
 
 class PlnLoader
 {
 public:
-  PlnLoader() {}
-  ~PlnLoader() {}
+  PlnLoader() = default;
+  ~PlnLoader() = default;
 
-  void				parseLine(std::vector<int> & map, std::string const & line) const {
-    for (auto character : line) {
-      map.push_back((character == '1') ? 1 : 0);
-    }
+  Plan                          load(std::string const & plnFilePath) const {
+      std::ifstream	ifs(plnFilePath, std::ifstream::in);
+
+      if (!ifs.is_open()) {
+	throw std::invalid_argument("file not exists");
+      }
+
+      Plan		plan = load(ifs);
+
+      ifs.close();
+      return plan;
   }
 
   Plan                          load(std::ifstream & plnFile) const {
@@ -37,6 +45,12 @@ public:
 private:
   PlnLoader(PlnLoader const &) = delete;
   PlnLoader & operator=(PlnLoader const &) = delete;
+
+  void				parseLine(std::vector<int> & map, std::string const & line) const {
+    for (auto character : line) {
+      map.push_back((character == '1') ? 1 : 0);
+    }
+  }
 };
 
 #endif
