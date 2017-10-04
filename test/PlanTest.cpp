@@ -56,3 +56,49 @@ TEST(PlanTest, CheckAccessorMutator) {
   EXPECT_EQ(0, plan.getCell(5));
   EXPECT_EQ(0, plan.getCell(1, 1));
 }
+
+TEST(PlanTest, ShouldFailAsWidth1) {
+  try {
+    Plan plan(1, 2, {1, 1});
+    FAIL();
+  } catch (std::invalid_argument const & exception) {
+    EXPECT_STREQ("width must be strictly higher than 1", exception.what());
+  }
+}
+
+TEST(PlanTest, ShouldFailAsHeight1) {
+  try {
+    Plan plan(2, 1, {1, 1});
+    FAIL();
+  } catch (std::invalid_argument const & exception) {
+    EXPECT_STREQ("height must be strictly higher than 1", exception.what());
+  }
+}
+
+TEST(PlanTest, ShouldFailAsWidthAndHeight1) {
+  try {
+    Plan plan(1, 1, {1, 1});
+    FAIL();
+  } catch (std::invalid_argument const & exception) {
+    EXPECT_STREQ("width must be strictly higher than 1", exception.what());
+  }
+}
+
+TEST(PlanTest, RemoveSideWallShouldThrowLogicException) {
+  Plan plan(2, 2, {1, 1, 1, 1});
+  try {
+    plan.setCell(0, 1, 0);
+    FAIL();
+  } catch (std::logic_error const & exception) {
+    EXPECT_STREQ("Try to remove an immoveable wall", exception.what());
+  }
+}
+
+TEST(PlanTest, PlanWithoutSideWallsShouldThrowInvalidArgument) {
+  try {
+    Plan plan(2, 2, {1, 0, 1, 1});
+    FAIL();
+  } catch (std::invalid_argument const & exception) {
+    EXPECT_STREQ("bad map, not surrounded by walls", exception.what());
+  }
+}

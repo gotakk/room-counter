@@ -17,9 +17,7 @@ int main(int argc, char * argv[])
   Plan plan = plnLoader.load(argv[1]);
   Architect architect;
 
-  std::cout << plan;
-
-  architect.countRooms(plan);
+  std::cout << architect.countRooms(plan) << std::endl;
 
   return 0;
 }

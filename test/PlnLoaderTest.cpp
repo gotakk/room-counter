@@ -44,6 +44,7 @@ TEST(PlnLoaderTest, ShouldThrowInvalidArgumentException) {
   PlnLoader plnLoader;
   try {
     Plan plan = plnLoader.load("./plans/dfdsfsdfsdfd.pln");
+    FAIL();
   } catch (std::invalid_argument const & exception) {
     EXPECT_STREQ("file not exists", exception.what());
   }

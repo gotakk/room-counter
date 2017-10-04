@@ -1,14 +1,15 @@
 #ifndef __ARCHITECT_H__
 #define __ARCHITECT_H__
 
-#include <iostream>
 #include <vector>
+
 #include "Plan.h"
 
 class Architect
 {
 public:
   Architect() {}
+  ~Architect() {}
 
   int countRooms(Plan & plan) {
     int counter = 0;
@@ -24,7 +25,6 @@ public:
       }
     }
 
-    std::cout << counter << std::endl;
     return counter;
   }
 
