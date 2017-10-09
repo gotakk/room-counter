@@ -28,8 +28,8 @@ public:
   }
 
   Plan                          load(std::ifstream & plnFile) const {
-    unsigned				width = 0;
-    unsigned				height = 0;
+    size_t				width = 0;
+    size_t				height = 0;
     std::vector<int>			map;
     std::string                         line;
 

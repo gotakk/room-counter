@@ -84,21 +84,11 @@ TEST(PlanTest, ShouldFailAsWidthAndHeight1) {
   }
 }
 
-TEST(PlanTest, RemoveSideWallShouldThrowLogicException) {
-  Plan plan(2, 2, {1, 1, 1, 1});
-  try {
-    plan.setCell(0, 1, 0);
-    FAIL();
-  } catch (std::logic_error const & exception) {
-    EXPECT_STREQ("Try to remove an immoveable wall", exception.what());
-  }
-}
-
 TEST(PlanTest, PlanWithoutSideWallsShouldThrowInvalidArgument) {
   try {
     Plan plan(2, 2, {1, 0, 1, 1});
     FAIL();
   } catch (std::invalid_argument const & exception) {
-    EXPECT_STREQ("bad map, not surrounded by walls", exception.what());
+    EXPECT_STREQ("bad map, not surrounded by walls (top side)", exception.what());
   }
 }

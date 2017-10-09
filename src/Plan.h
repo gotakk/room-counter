@@ -8,69 +8,54 @@ class Plan
 {
 public:
 
-  Plan(unsigned width, unsigned height, std::vector<int> const & map) : _width(width), _height(height), _map(map) {
-    if (_width < 2) {
-      throw std::invalid_argument("width must be strictly higher than 1");
-    }
-
-    if (_height < 2) {
-      throw std::invalid_argument("height must be strictly higher than 1");
-    }
-
-    if (_width * _height != _map.size()) {
-      throw std::invalid_argument("width * height are different of map size");
-    }
-
-    unsigned size = getSize();
-
-    for (unsigned i = 0; i < size; ++i) {
-      if (map[i] == 0 && isSideWall(i)) {
-	throw std::invalid_argument("bad map, not surrounded by walls");
-      }
-    }
-  }
+  Plan(size_t width, size_t height, std::vector<int> const & map)
+    : _width(validateWidth(width))
+    , _height(validateHeight(height))
+    , _map(validateMap(map)) { }
   Plan(Plan const && plan) { }
 
 
-  void		setCell(unsigned index, int value) {
-    if (value == 0) {
-      if (isSideWall(index)) {
-	throw std::logic_error("Try to remove an immoveable wall");
-      }
+  void		setCell(size_t index, int value) {
+    if (index > _map.size()) {
+      throw std::logic_error("index overflow");
     }
 
     _map[index] = value;
   }
 
-  unsigned	getCell(unsigned index) const {
+  size_t	getCell(size_t index) const {
+    if (index > _map.size()) {
+      throw std::logic_error("index overflow");
+    }
+
     return _map[index];
   }
 
-  void		setCell(unsigned x, unsigned y, int value) {
+  void		setCell(size_t x, size_t y, int value) {
     setCell(x + _width * y, value);
   }
 
-  unsigned	getCell(unsigned x, unsigned y) const {
+  size_t	getCell(size_t x, size_t y) const {
     return getCell(x + _width * y);
   }
 
-  unsigned	getWidth() const {
+  size_t	getWidth() const {
     return _width;
   }
 
-  unsigned	getHeight() const {
+  size_t	getHeight() const {
     return _height;
   }
 
-  unsigned	getSize() const {
+  size_t	getSize() const {
     return _map.size();
   }
 
   friend std::ostream &                 operator<<(std::ostream & oss, Plan const & plan) {
-    unsigned	planWidth = plan.getWidth();
-    unsigned	planSize = plan.getSize();
+    size_t	planWidth = plan.getWidth();
+    size_t	planSize = plan.getSize();
 
-    for (unsigned indexPlan = 0; indexPlan < planSize; ++indexPlan) {
+    for (size_t indexPlan = 0; indexPlan < planSize; ++indexPlan) {
       if (indexPlan != 0) {
 	if (indexPlan % planWidth == 0) {
 	  oss << std::endl;
@@ -100,32 +85,56 @@ private:
   Plan(Plan const & plan) = delete;
   Plan &	operator=(Plan const &) = delete;
 
-  bool		isSideWall(unsigned index) {
-    // TOP
-    if (index < _width) {
-      return true;
+  size_t	validateWidth(size_t width) {
+    if (width < 2) {
+      throw std::invalid_argument("width must be strictly higher than 1");
     }
-
-    // BOTTOM
-    if (index > (_width * _height - _width)) {
-      return true;
-    }
-
-    // RIGHT
-    if (index % _width == 0) {
-      return true;
-    }
-
-    // LEFT
-    if (index % _width == _width - 1) {
-      return true;
-    }
-
-    return false;
+    return width;
   }
 
-  unsigned		_width = 0;
-  unsigned		_height = 0;
+  size_t	validateHeight(size_t height) {
+    if (height < 2) {
+      throw std::invalid_argument("height must be strictly higher than 1");
+    }
+    return height;
+  }
+
+  std::vector<int> const &	validateMap(std::vector<int> const & map) {
+    size_t const	mapSize = map.size();
+
+    if (_width * _height != mapSize) {
+      throw std::invalid_argument("width * height are different of map size");
+    }
+
+    // check TOP and BOTTOM
+    for (size_t i = 0; i < _width; ++i) {
+      size_t const topOffset = i;
+      size_t const bottomOffset = (_height - 1) * _width + i;
+      if (map[topOffset] == 0) {
+	throw std::invalid_argument("bad map, not surrounded by walls (top side)");
+      }
+      if (map[bottomOffset] == 0) {
+	throw std::invalid_argument("bad map, not surrounded by walls (bottom side)");
+      }
+    }
+
+    // check LEFT and RIGHT
+    for (size_t i = 0; i < _height; ++i) {
+      size_t const leftOffset = i * _width;
+      size_t const rightOffset = leftOffset + (_width - 1);
+      if (map[leftOffset] == 0) {
+	throw std::invalid_argument("bad map, not surrounded by walls (left side)");
+      }
+      if (map[rightOffset] == 0) {
+	throw std::invalid_argument("bad map, not surrounded by walls (right side)");
+      }
+    }
+
+    return map;
+  }
+
+  size_t const          _width = 0;
+  size_t const 	        _height = 0;
   std::vector<int>	_map;
 };
 

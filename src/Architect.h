@@ -13,11 +13,11 @@ public:
 
   int countRooms(Plan & plan) {
     int counter = 0;
-    unsigned width = plan.getWidth();
-    unsigned height = plan.getHeight();
+    size_t width = plan.getWidth();
+    size_t height = plan.getHeight();
 
-    for (unsigned x = 0; x < width; ++x) {
-      for (unsigned y = 0; y < height; ++y) {
+    for (size_t x = 0; x < width; ++x) {
+      for (size_t y = 0; y < height; ++y) {
 	if (plan.getCell(x, y) == 0) {
 	  ++counter;
 	  exploreRoom(plan, x, y, width, height);
@@ -29,7 +29,7 @@ public:
   }
 
 private:
-  void			exploreRoom(Plan & plan, unsigned x, unsigned y, unsigned width, unsigned height) {
+  void			exploreRoom(Plan & plan, size_t x, size_t y, size_t width, size_t height) {
     plan.setCell(x, y, 2);
 
     // TOP
